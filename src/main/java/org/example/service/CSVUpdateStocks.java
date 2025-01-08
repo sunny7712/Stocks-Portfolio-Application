@@ -1,50 +1,38 @@
 package org.example.service;
 
-import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.example.dto.StockInfo;
 import org.example.entities.Stock;
 import org.example.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVUpdateStocks implements UpdateStocks{
+@Service
+public class CSVUpdateStocks implements UpdateStocks {
 
     @Autowired
     private StockRepository stockRepository;
 
-    private final Resource inputFile;
-
-
-    public CSVUpdateStocks(@Value("classpath:sme070125.csv") Resource inputFile){
-        this.inputFile = inputFile;
-
-    }
-
     @Override
-    @SneakyThrows
-    public void updateStocks(){
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(this.inputFile.getFile())));
-        CSVParser csvParser;
-        csvParser = new CSVParser(reader, CSVFormat.newFormat(',')
+    public void updateStocks(MultipartFile file) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
                 .withFirstRecordAsHeader()
                 .withIgnoreHeaderCase()
                 .withTrim());
+
         List<Stock> stockList = new ArrayList<>();
         csvParser.forEach(record -> {
-
             String stockName = record.get("SECURITY");
             Stock existingStock = stockRepository.findByStockName(stockName);
-            if(existingStock != null){
+            if (existingStock != null) {
                 existingStock.setStockName(record.get("SECURITY"));
                 existingStock.setOpenPrice(Double.parseDouble(record.get("OPEN_PRICE")));
                 existingStock.setClosePrice(Double.parseDouble(record.get("CLOSE_PRICE")));
@@ -52,15 +40,14 @@ public class CSVUpdateStocks implements UpdateStocks{
                 existingStock.setHighPrice(Double.parseDouble(record.get("HIGH_PRICE")));
                 existingStock.setSettlementPrice(Double.parseDouble(record.get("CLOSE_PRICE")));
                 stockList.add(existingStock);
-            }
-            else{
+            } else {
                 Stock stock = new Stock();
                 stock.setStockName(record.get("SECURITY"));
                 stock.setOpenPrice(Double.parseDouble(record.get("OPEN_PRICE")));
                 stock.setClosePrice(Double.parseDouble(record.get("CLOSE_PRICE")));
                 stock.setLowPrice(Double.parseDouble(record.get("LOW_PRICE")));
                 stock.setHighPrice(Double.parseDouble(record.get("HIGH_PRICE")));
-                stock.setSettlementPrice(Double.parseDouble(record.get("CLOSE_PRICE"))); // assuming close price for settlement price.
+                stock.setSettlementPrice(Double.parseDouble(record.get("CLOSE_PRICE")));
                 stockList.add(stock);
             }
         });
