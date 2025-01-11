@@ -1,6 +1,6 @@
 import org.example.Main;
-import org.example.entities.Stock;
-import org.example.repository.StockRepository;
+import org.example.entities.Stocks;
+import org.example.repository.StocksRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,15 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = Main.class)
-public class StockRepositoryTest {
+public class StocksRepositoryTest {
 
     @Autowired
-    private StockRepository stockRepository;
+    private StocksRepository stocksRepository;
 
     @Test
     public void testDatabaseConnection() {
-        // Create a stock object
-        Stock stock = new Stock();
+        Stocks stock = new Stocks();
+        stock.setStockId("test");
         stock.setStockName("Test Stock");
         stock.setOpenPrice(100.0);
         stock.setClosePrice(110.0);
@@ -24,13 +24,10 @@ public class StockRepositoryTest {
         stock.setLowPrice(90.0);
         stock.setSettlementPrice(110.0);
 
-        // Save the stock object to the database
-        Stock savedStock = stockRepository.save(stock);
+        Stocks savedStock = stocksRepository.save(stock);
 
-        // Retrieve the stock object from the database by its name
-        Stock retrievedStock = stockRepository.findByStockName("Test Stock");
+        Stocks retrievedStock = stocksRepository.findByStockId("test");
 
-        // Verify that the saved and retrieved objects match
         assertThat(retrievedStock).isNotNull();
         assertThat(retrievedStock.getStockName()).isEqualTo(savedStock.getStockName());
         assertThat(retrievedStock.getOpenPrice()).isEqualTo(savedStock.getOpenPrice());

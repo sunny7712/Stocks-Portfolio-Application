@@ -2,8 +2,8 @@ package org.example.service;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.example.entities.Stock;
-import org.example.repository.StockRepository;
+import org.example.entities.Stocks;
+import org.example.repository.StocksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +18,7 @@ import java.util.List;
 public class CSVUpdateStocks implements UpdateStocks {
 
     @Autowired
-    private StockRepository stockRepository;
+    private StocksRepository stocksRepository;
 
     @Override
     public void updateStocks(MultipartFile file) throws IOException {
@@ -28,10 +28,10 @@ public class CSVUpdateStocks implements UpdateStocks {
                 .withIgnoreHeaderCase()
                 .withTrim());
 
-        List<Stock> stockList = new ArrayList<>();
+        List<Stocks> stockList = new ArrayList<>();
         csvParser.forEach(record -> {
-            String stockName = record.get("SECURITY");
-            Stock existingStock = stockRepository.findByStockName(stockName);
+            String stockId = record.get("SYMBOL");
+            Stocks existingStock = stocksRepository.findByStockId(stockId);
             if (existingStock != null) {
                 existingStock.setStockName(record.get("SECURITY"));
                 existingStock.setOpenPrice(Double.parseDouble(record.get("OPEN_PRICE")));
@@ -41,7 +41,8 @@ public class CSVUpdateStocks implements UpdateStocks {
                 existingStock.setSettlementPrice(Double.parseDouble(record.get("CLOSE_PRICE")));
                 stockList.add(existingStock);
             } else {
-                Stock stock = new Stock();
+                Stocks stock = new Stocks();
+                stock.setStockId(stockId);
                 stock.setStockName(record.get("SECURITY"));
                 stock.setOpenPrice(Double.parseDouble(record.get("OPEN_PRICE")));
                 stock.setClosePrice(Double.parseDouble(record.get("CLOSE_PRICE")));
@@ -51,6 +52,6 @@ public class CSVUpdateStocks implements UpdateStocks {
                 stockList.add(stock);
             }
         });
-        stockRepository.saveAll(stockList);
+        stocksRepository.saveAll(stockList);
     }
 }

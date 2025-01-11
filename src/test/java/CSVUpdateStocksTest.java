@@ -1,8 +1,8 @@
 
 import org.example.Main;
-import org.example.entities.Stock;
+import org.example.entities.Stocks;
 import org.example.service.CSVUpdateStocks;
-import org.example.repository.StockRepository;
+import org.example.repository.StocksRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CSVUpdateStocksTest {
 
     @Autowired
-    private StockRepository stockRepository;
+    private StocksRepository stocksRepository;
 
     @Autowired
     private CSVUpdateStocks csvUpdateStocks;
@@ -39,9 +39,9 @@ public class CSVUpdateStocksTest {
 
         csvUpdateStocks.updateStocks(file);
 
-        Stock stock = stockRepository.findByStockName("AATMAJ HEALTHCARE LIMITED");
+        Stocks stock = stocksRepository.findByStockId("AATMAJ");
         assertThat(stock).isNotNull();
-        assertThat(stock.getStockName()).isEqualTo("AATMAJ HEALTHCARE LIMITED");
+        assertThat(stock.getStockId()).isEqualTo("AATMAJ");
         assertThat(stock.getOpenPrice()).isGreaterThan(0); // Assuming positive prices in CSV
     }
 }

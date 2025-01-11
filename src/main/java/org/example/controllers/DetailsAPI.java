@@ -1,7 +1,6 @@
 package org.example.controllers;
 
-import jakarta.websocket.server.PathParam;
-import org.example.entities.Stock;
+import org.example.dto.StockDTO;
 import org.example.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,9 +18,9 @@ public class DetailsAPI {
     private StockService stockService;
 
     @GetMapping(value = "/{stockId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Stock> getStockDetails(@PathVariable("stockId") Long stockId){
+    public ResponseEntity<StockDTO> getStockDetails(@PathVariable("stockId") String stockId){
         try{
-            Stock stock = stockService.getStockById(stockId);
+            StockDTO stock = stockService.getStockById(stockId);
             if (stock == null){
                 return ResponseEntity.notFound().build();
             }
