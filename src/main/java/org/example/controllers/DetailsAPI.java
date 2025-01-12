@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("stock-details")
 public class DetailsAPI {
 
+
     @Autowired
     private StockService stockService;
 
     @GetMapping(value = "/{stockId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<StockDTO> getStockDetails(@PathVariable("stockId") String stockId){
+        if(stockId == null || stockId.trim().isEmpty()){
+            return ResponseEntity.badRequest().body(null);
+        }
         try{
             StockDTO stock = stockService.getStockById(stockId);
             if (stock == null){
@@ -28,8 +32,7 @@ public class DetailsAPI {
                 return ResponseEntity.ok(stock);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.status(500).build();
         }
     }
 }

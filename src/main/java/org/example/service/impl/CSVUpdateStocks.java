@@ -1,9 +1,10 @@
-package org.example.service;
+package org.example.service.impl;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.example.entities.Stocks;
 import org.example.repository.StocksRepository;
+import org.example.service.UpdateStocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,12 +23,12 @@ public class CSVUpdateStocks implements UpdateStocks {
 
     @Override
     public void updateStocks(MultipartFile file) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
-        CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-                .withFirstRecordAsHeader()
-                .withIgnoreHeaderCase()
-                .withTrim());
+        CSVParser csvParser = getCsvParser(file);
+        List<Stocks> stockList = getStocksList(csvParser);
+        stocksRepository.saveAll(stockList);
+    }
 
+    private List<Stocks> getStocksList(CSVParser csvParser) {
         List<Stocks> stockList = new ArrayList<>();
         csvParser.forEach(record -> {
             String stockId = record.get("SYMBOL");
@@ -52,6 +53,14 @@ public class CSVUpdateStocks implements UpdateStocks {
                 stockList.add(stock);
             }
         });
-        stocksRepository.saveAll(stockList);
+        return stockList;
+    }
+
+    private static CSVParser getCsvParser(MultipartFile file) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        return new CSVParser(reader, CSVFormat.DEFAULT
+                .withFirstRecordAsHeader()
+                .withIgnoreHeaderCase()
+                .withTrim());
     }
 }

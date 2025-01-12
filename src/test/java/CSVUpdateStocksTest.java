@@ -1,7 +1,7 @@
 
 import org.example.Main;
 import org.example.entities.Stocks;
-import org.example.service.CSVUpdateStocks;
+import org.example.service.impl.CSVUpdateStocks;
 import org.example.repository.StocksRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

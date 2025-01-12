@@ -1,6 +1,6 @@
 package org.example.controllers;
 
-import org.example.service.CSVUpdateStocks;
+import org.example.service.UpdateStocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,12 +16,12 @@ import java.io.IOException;
 public class UpdateStocksAPI {
 
     @Autowired
-    private CSVUpdateStocks csvUpdateStocks;
+    private UpdateStocks updateStocks;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadCSV(@RequestParam("file.csv") MultipartFile file){
         try{
-            csvUpdateStocks.updateStocks(file);
+            updateStocks.updateStocks(file);
             return ResponseEntity.ok("Stocks updated successfully.");
         }
         catch (IOException ex){
