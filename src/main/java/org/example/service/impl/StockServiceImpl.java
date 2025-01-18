@@ -25,4 +25,19 @@ public class StockServiceImpl implements StockService {
                 .settlementPrice(stock.getSettlementPrice()).build();
 
     }
+
+    public StockDTO getStockByName(String stockName) {
+        Stocks stock = stocksRepository.findByStockName(stockName);
+        return StockDTO.builder()
+                .stockId(stock.getStockId())
+                .stockName(stock.getStockName())
+                .openPrice(stock.getOpenPrice())
+                .closePrice(stock.getClosePrice())
+                .lowPrice(stock.getLowPrice())
+                .highPrice(stock.getHighPrice())
+                .settlementPrice(stock.getSettlementPrice()).build();
+
+    }
+
+
 }
